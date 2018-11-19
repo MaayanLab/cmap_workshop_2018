@@ -1,0 +1,8 @@
+data
+.local
+.ipython
+.jupyter
+.cache
+.bash_history
+.ipynb_checkpoints
+*.pyc
