@@ -6,3 +6,4 @@ data
 .bash_history
 .ipynb_checkpoints
 *.pyc
+.python_history
