@@ -1,8 +1,7 @@
 #!/bin/bash
 docker run -it -p 8888:8888 \
-	-e "PASSWORD=password" -e "USE_HTTP=1" \
-    -v $(pwd):/notebooks \
-    -v $(pwd)/data:/notebooks/data \
-    maayanlab/ipython2-cmap
+    -v $(pwd):/home/jovyan \
+    -v $(pwd)/data:/home/jovyan/data \
+    jupyter/scipy-notebook:e8613d84128b
 
     

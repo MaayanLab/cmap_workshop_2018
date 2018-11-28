@@ -6,7 +6,7 @@ def slice_matrix(gctx, cids, rids, transpose=False):
     is ordered by cids and rids.'''    
     all_cids = gctx['/0/META/COL/id']
     c_mask = np.in1d(all_cids, cids)
-    cids_subset = all_cids[c_mask].tolist()
+    cids_subset = all_cids[c_mask].astype(cids.dtype).tolist()
     c_indices = np.array([cids_subset.index(id_) 
                           for id_ in cids])
 
@@ -18,13 +18,13 @@ def slice_matrix(gctx, cids, rids, transpose=False):
     
     all_rids = gctx['/0/META/ROW/id']
     r_mask = np.in1d(all_rids, rids)
-    rids_subset = all_rids[r_mask].tolist()
+    rids_subset = all_rids[r_mask].astype(cids.dtype).tolist()
     r_indices = np.array([rids_subset.index(id_) 
                           for id_ in rids])
     if not transpose:
         submat = submat[:, r_mask][:, r_indices]
     else:
-        submat = submat[r_mask, :][r_indices, :]
+        submat = submat[r_mask, :][r_indices, :].T
     return submat
 
 def mean_center(mat, centerby):

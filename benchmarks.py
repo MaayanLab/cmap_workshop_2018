@@ -1,3 +1,4 @@
+from __future__ import division
 import os, sys, json
 from itertools import combinations
 import h5py
@@ -72,7 +73,7 @@ def pscore(mat, func, n_jobs=1, **kwargs):
     Similar to pdist
     '''
     n = mat.shape[0]
-    n_scores = n * (n-1) / 2
+    n_scores = n * (n-1) // 2
     scores = np.zeros(n_scores)
     c = 0
     if n_jobs == 1:
@@ -80,7 +81,7 @@ def pscore(mat, func, n_jobs=1, **kwargs):
             scores[c] = func(mat[i], mat[j])
             c += 1
     else:
-        scores = Parallel(n_jobs=n_jobs, backend='multiprocessing', verbose=10)(
+        scores = Parallel(n_jobs=n_jobs, backend='multiprocessing', verbose=1)(
             delayed(func)(mat[i], mat[j], **kwargs) for i, j in combinations(range(n), 2))
         scores = np.array(scores)
     return scores
@@ -126,12 +127,12 @@ def group_scores(res_scores, meta_df, same_cell=False, batch='batch_prefix'):
     
     if batch == 'batch_prefix':
         # Batch: CPC004
-        batches_i = np.array(map(lambda x:x.split('_')[0], res_scores['sig_i']))
-        batches_j = np.array(map(lambda x:x.split('_')[0], res_scores['sig_j']))
+        batches_i = np.array(list(map(lambda x:x.split('_')[0], res_scores['sig_i'])))
+        batches_j = np.array(list(map(lambda x:x.split('_')[0], res_scores['sig_j'])))
     else:
         # Batch: CPC004_MCF7_6H
-        batches_i = np.array(map(lambda x:x.split(':')[0], res_scores['sig_i']))
-        batches_j = np.array(map(lambda x:x.split(':')[0], res_scores['sig_j']))
+        batches_i = np.array(list(map(lambda x:x.split(':')[0], res_scores['sig_i'])))
+        batches_j = np.array(list(map(lambda x:x.split(':')[0], res_scores['sig_j'])))
         
     m_same_batch = batches_i == batches_j
     m_diff_batch = batches_i != batches_j
@@ -142,8 +143,8 @@ def group_scores(res_scores, meta_df, same_cell=False, batch='batch_prefix'):
     masks = (m_same_drug & m_same_batch), (m_same_drug & m_diff_batch), \
         (m_diff_drug & m_same_batch), (m_diff_drug & m_diff_batch)
     if same_cell:
-        cells_i = np.array(map(lambda x:x.split('_')[1], res_scores['sig_i']))
-        cells_j = np.array(map(lambda x:x.split('_')[1], res_scores['sig_j']))
+        cells_i = np.array(list(map(lambda x:x.split('_')[1], res_scores['sig_i'])))
+        cells_j = np.array(list(map(lambda x:x.split('_')[1], res_scores['sig_j'])))
         m_same_cell = cells_i == cells_j
         masks = [m & m_same_cell for m in masks]
     return masks
