@@ -1,7 +1,7 @@
 import h5py
 import numpy as np
 
-def slice_matrix(gctx, cids, rids):
+def slice_matrix(gctx, cids, rids, transpose=False):
     '''Slice the mat by cids and rids and ensure the mat 
     is ordered by cids and rids.'''    
     all_cids = gctx['/0/META/COL/id']
@@ -11,15 +11,20 @@ def slice_matrix(gctx, cids, rids):
                           for id_ in cids])
 
     mat = gctx['/0/DATA/0/matrix']
-    submat = mat[c_mask, :][c_indices, :]
+    if not transpose:
+        submat = mat[c_mask, :][c_indices, :]
+    else:
+        submat = mat[:, c_mask][:, c_indices]
     
     all_rids = gctx['/0/META/ROW/id']
     r_mask = np.in1d(all_rids, rids)
     rids_subset = all_rids[r_mask].tolist()
     r_indices = np.array([rids_subset.index(id_) 
                           for id_ in rids])
-    submat = submat[:, r_mask][:, r_indices]
-
+    if not transpose:
+        submat = submat[:, r_mask][:, r_indices]
+    else:
+        submat = submat[r_mask, :][r_indices, :]
     return submat
 
 def mean_center(mat, centerby):
@@ -32,4 +37,3 @@ def mean_center(mat, centerby):
     
     return mat_centered
 
-    

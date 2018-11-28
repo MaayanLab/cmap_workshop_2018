@@ -8,6 +8,29 @@ from scipy.stats.mstats import zscore
 from sklearn.decomposition import PCA
 from matplotlib.lines import Line2D
 
+
+def scatter_plot(coords, meta_df, standardize=3, hue=None, style=None, size=None):
+    df = pd.DataFrame(coords, columns=['x', 'y'], 
+        index=meta_df.index)
+    df = df.merge(meta_df, 
+        left_index=True,
+        right_index=True)
+
+    fig = plt.figure(figsize=(8,8))
+    ax = fig.add_subplot(111)
+    ax = sns.scatterplot('x', 'y', data=df, 
+                         hue=hue, size=size, style=style,
+        alpha=0.7, s=20, marker='o'
+        )    
+    # Shrink current axis by 20%
+    box = ax.get_position()
+    ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+    # Put a legend to the right of the current axis
+    ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+    fig.tight_layout()
+    return fig
+
+
 def PCA_plot(mat, meta_df, standardize=3, hue=None, style=None, size=None):
     '''
     mat: genes by samples np.array
@@ -50,3 +73,5 @@ def PCA_plot(mat, meta_df, standardize=3, hue=None, style=None, size=None):
     ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
     fig.tight_layout()
     return fig
+
+
