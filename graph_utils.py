@@ -6,6 +6,7 @@ import igraph as ig
 from sklearn import preprocessing, neighbors
 import matplotlib.pyplot as plt
 
+
 def compute_adjcency_mat(X, metric='euclidean'):
     pdist = pairwise_distances(X, metric=metric)
     adj_mat = 1 - pdist / pdist.max()
@@ -33,10 +34,10 @@ def plot_degree_distribution(G):
     return ax
     
 
-def create_knn_graph(X, k=30, metric='euclidean'):
+def create_knn_graph(X, k=30, metric='euclidean', n_jobs=1):
     '''Create a graph from a data matrix (sample x features).
     '''
-    adj_mat = neighbors.kneighbors_graph(X, k, mode='connectivity', metric=metric)
+    adj_mat = neighbors.kneighbors_graph(X, k, mode='connectivity', metric=metric, n_jobs=n_jobs)
     G = nx.from_scipy_sparse_matrix(adj_mat)
     return G
 
@@ -57,24 +58,8 @@ def create_graph_by_threshold_knn(adj_mat, percentile, k=1, X=None):
     return nx.compose(G_thres, G_knn)
 
 def nx_graph_to_igraph(G):
-    # convert via adjacency matrix
+    '''convert nx.Graph to ig.Graph via adjacency matrix
+    '''
     g = ig.Graph.Adjacency((nx.to_numpy_matrix(G) > 0).tolist(), mode=ig.ADJ_UNDIRECTED)
     return g
-
-def plotly_network(G, layout, meta_df, hue=None):
-    N = len(layout.coords)
-    edges = [e.tuple for e in list(G.es)]
-
-    Xn=[layout[k][0] for k in range(N)]# x-coordinates of nodes
-    Yn=[layout[k][1] for k in range(N)]# y-coordinates
-    Zn=[layout[k][2] for k in range(N)]# z-coordinates
-    Xe=[]
-    Ye=[]
-    Ze=[]
-    for e in edges:
-        Xe+=[layout[e[0]][0], layout[e[1]][0], None]# x-coordinates of edge ends
-        Ye+=[layout[e[0]][1], layout[e[1]][1], None]  
-        Ze+=[layout[e[0]][2], layout[e[1]][2], None]  
-
-
 
