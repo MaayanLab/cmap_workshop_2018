@@ -114,7 +114,7 @@ def compute_pairwise_connectivity_scores(sig_mat, meta_df, n_jobs=1):
     return df
 
 
-def group_scores(res_scores, meta_df, same_cell=False, batch='batch_prefix'):
+def group_scores(res_scores, meta_df, same_cell=False, batch='pert_plate'):
     '''Group scores to get the follow 4 groups:
     - same drug same batch
     - same drug diff batch
@@ -125,7 +125,7 @@ def group_scores(res_scores, meta_df, same_cell=False, batch='batch_prefix'):
     drugs_i = np.array([d_sig_pert[s] for s in res_scores['sig_i']])
     drugs_j = np.array([d_sig_pert[s] for s in res_scores['sig_j']])
     
-    if batch == 'batch_prefix':
+    if batch == 'pert_plate':
         # Batch: CPC004
         batches_i = np.array(list(map(lambda x:x.split('_')[0], res_scores['sig_i'])))
         batches_j = np.array(list(map(lambda x:x.split('_')[0], res_scores['sig_j'])))
@@ -150,7 +150,7 @@ def group_scores(res_scores, meta_df, same_cell=False, batch='batch_prefix'):
     return masks
     
 
-def density_plot_scores(res_scores, meta_df, same_cell=False, batch='batch_prefix'):
+def density_plot_scores(res_scores, meta_df, same_cell=False, batch='pert_plate'):
     fig = plt.figure(figsize=(12, 5))
     ax1 = fig.add_subplot(121)
     ax2 = fig.add_subplot(122)
