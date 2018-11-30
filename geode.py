@@ -48,8 +48,6 @@ def compute_chdir_signature(sig_id, distil_ids_pert, distil_ids_sub, mat, mat_ce
     # Make the sample_class
     mask_pert = np.in1d(distil_ids_sub, distil_ids_pert)
     sample_class = mask_pert.astype(int) + 1
-    # Apply CD on the original mat
-    cd_coefs = chdir(mat.T, sample_class)
     # Apply CD on the mean centered mat
     cd_coefs_centered = chdir(mat_centered.T, sample_class)
     # Averaging profiles after mean centering
@@ -57,7 +55,6 @@ def compute_chdir_signature(sig_id, distil_ids_pert, distil_ids_sub, mat, mat_ce
 
     doc = {
         'sig_id': sig_id,
-        'CD_noncenter_LM': cd_coefs,
         'CD_center_LM': cd_coefs_centered,
         'avg_center_LM': avg_vals,
     }

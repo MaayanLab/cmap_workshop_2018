@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 from scipy.spatial import distance
-from sklearn import metrics
+from sklearn import metrics, cluster, decomposition, manifold
 from joblib import delayed, Parallel
 
 from plots import *
@@ -184,4 +184,21 @@ def density_plot_scores(res_scores, meta_df, same_cell=False, batch='batch_prefi
     fig.tight_layout()
     
     return fig
+
+
+def perform_tsne_and_clustering(sig_mat, meta_df, sig_name=None):
+    
+    # Reduce dimentionality using tSNE
+    pca = decomposition.PCA(n_components=50)
+    tsne = manifold.TSNE()
+
+    sig_mat_tsne = tsne.fit_transform( pca.fit_transform(sig_mat) )
+    
+    # Perform unsupervised clustering on the tSNE coords
+    clustr = cluster.AffinityPropagation()
+    clustr.fit(sig_mat_tsne)
+
+    # Add the clustering labels to the meta_df
+    meta_df['cluster_label_%s' % sig_name] = clustr.labels_
+    return sig_mat_tsne, meta_df
 
