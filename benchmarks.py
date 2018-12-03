@@ -94,7 +94,7 @@ def compute_pairwise_connectivity_scores(sig_mat, meta_df, n_jobs=1):
     # scores_es50 = pscore(sig_mat, gsea_score, n_jobs=n_jobs, n_sig=50)
 
     scores_cosine = pscore(sig_mat, cosine_sim, n_jobs=n_jobs)
-    scores_corr = pscore(sig_mat, correlation, n_jobs=n_jobs)
+    # scores_corr = pscore(sig_mat, correlation, n_jobs=n_jobs)
     
     n_scores = len(scores_cosine)
     sigs_i = [None] * n_scores
@@ -108,7 +108,7 @@ def compute_pairwise_connectivity_scores(sig_mat, meta_df, n_jobs=1):
     df = pd.DataFrame({
         'sig_i': sigs_i, 'sig_j': sigs_j, 
         'cosine': scores_cosine,
-        'corr': scores_corr,
+        # 'corr': scores_corr,
         # 'ES50': scores_es50
     })
     return df
@@ -151,35 +151,34 @@ def group_scores(res_scores, meta_df, same_cell=False, batch='pert_plate'):
     
 
 def density_plot_scores(res_scores, meta_df, same_cell=False, batch='pert_plate'):
-    fig = plt.figure(figsize=(12, 5))
-    ax1 = fig.add_subplot(121)
-    ax2 = fig.add_subplot(122)
+    fig = plt.figure(figsize=(8, 5))
+    ax = fig.add_subplot(111)
 
     m1, m2, m3, m4 = group_scores(res_scores, meta_df, same_cell=same_cell, batch=batch)
     print(m1.sum(), m2.sum(), m3.sum(), m4.sum())
     
-    for metric, ax in zip(['cosine', 'corr'], [ax1, ax2]):
-        ax = sns.distplot(res_scores.loc[m1][metric], 
-                           hist=False, kde=True, ax=ax,
-                           label='same drug same batch'
-                          )
-        ax = sns.distplot(res_scores.loc[m2][metric],
-                           hist=False, kde=True, ax=ax,
-                           label='same drug diff batch'
-                          )
-        ax = sns.distplot(res_scores.loc[m3][metric], 
-                           hist=False, kde=True, ax=ax,
-                           label='diff drug same batch'
-                          )
-        ax = sns.distplot(res_scores.loc[m4][metric],
-                           hist=False, kde=True, ax=ax,
-                           label='diff drug diff batch'
-                          )        
-        
-        ax.legend(loc='upper left', prop={'size':10})
-        ax.set_xlabel(metric)
-        ax.set_ylabel('Density')
-        ax.set_xlim([-1, 1])
+    metric = 'cosine'
+    ax = sns.distplot(res_scores.loc[m1][metric], 
+                       hist=False, kde=True, ax=ax,
+                       label='same drug same batch'
+                      )
+    ax = sns.distplot(res_scores.loc[m2][metric],
+                       hist=False, kde=True, ax=ax,
+                       label='same drug diff batch'
+                      )
+    ax = sns.distplot(res_scores.loc[m3][metric], 
+                       hist=False, kde=True, ax=ax,
+                       label='diff drug same batch'
+                      )
+    ax = sns.distplot(res_scores.loc[m4][metric],
+                       hist=False, kde=True, ax=ax,
+                       label='diff drug diff batch'
+                      )        
+    
+    ax.legend(loc='upper left', prop={'size':10})
+    ax.set_xlabel(metric)
+    ax.set_ylabel('Density')
+    ax.set_xlim([-1, 1])
 
     fig.tight_layout()
     

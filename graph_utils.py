@@ -4,6 +4,7 @@ import numpy as np
 import networkx as nx
 import igraph as ig
 from sklearn import preprocessing, neighbors
+from sklearn.metrics import pairwise_distances
 import matplotlib.pyplot as plt
 
 
