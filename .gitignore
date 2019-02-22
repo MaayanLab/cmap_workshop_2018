@@ -8,3 +8,4 @@ data
 *.pyc
 .python_history
 *.docx
+.DS_Store
